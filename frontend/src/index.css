@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2E7D32;
+  --color-secondary: #81C784;
+  --color-accent: #A5D6A7;
+  --color-success: #43A047;
+  --color-warning: #F59E0B;
+  --color-error: #D32F2F;
+}
+
+@layer base {
+  :root {
+    --bg-color: #FDFBF7;
+    --text-color: #1F2937;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .high-contrast {
+    --bg-color: #000000;
+    --text-color: #FFFFFF;
+    --card-bg: #111111;
+    --border-color: #FFFFFF;
+    --color-primary: #81C784;
+    --color-secondary: #A5D6A7;
+    --color-error: #EF5350;
+  }
+  
+  .large-text {
+    font-size: 125%;
+  }
+
+  .reduce-motion * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 18px; /* Minimum 18px */
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-image: linear-gradient(135deg, var(--bg-color), #E8F5E9);
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .card-panel {
+    background-color: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 32px rgba(46, 125, 50, 0.08); /* Soft green shadow */
+  }
+}

@@ -1,0 +1,21 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AccessibilityProvider } from './core/contexts/AccessibilityContext';
+import Login from './features/auth/Login';
+import Dashboard from './features/dashboard/Dashboard';
+
+const App: React.FC = () => {
+  return (
+    <AccessibilityProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Router>
+    </AccessibilityProvider>
+  );
+};
+
+export default App;

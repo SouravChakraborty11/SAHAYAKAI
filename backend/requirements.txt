@@ -1,0 +1,10 @@
+fastapi[all]
+uvicorn
+sqlalchemy
+asyncpg
+alembic
+pydantic[email]
+pydantic-settings
+pyjwt
+python-dotenv
+google-auth
