@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, Accessibility, Lock, Globe, HelpCircle, 
-  Mic, Eye, EyeOff, Type, PhoneCall, Building2, Heart, Mail, ArrowRight, User
+  Mic, Eye, EyeOff, Type, AlertTriangle, Building2, Heart, Mail, ArrowRight, User
 } from 'lucide-react';
 import { GlassCard } from '../../components/GlassCard';
 import { Button } from '../../components/Button';

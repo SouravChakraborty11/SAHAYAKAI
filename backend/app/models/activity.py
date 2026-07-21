@@ -1,0 +1,12 @@
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from datetime import datetime
+from app.core.database import Base
+
+class ActivityLog(Base):
+    __tablename__ = "activity_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Optional if we allow anonymous logging
+    action = Column(String(100), nullable=False) # e.g., "USED_OCR", "ASKED_SCHEME"
+    details = Column(String, nullable=True)
+    timestamp = Column(DateTime, default=datetime.utcnow)

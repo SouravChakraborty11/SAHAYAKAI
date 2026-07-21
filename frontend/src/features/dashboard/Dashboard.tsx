@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Bell, FileText, CheckCircle, Search, Heart, Map, 
-  Mic, LogOut, User, LayoutDashboard, Settings
+  Mic, LogOut, User, LayoutDashboard, Settings, Activity
 } from 'lucide-react';
 import { GlassCard } from '../../components/GlassCard';
 import { AccessibilityMenu } from '../../components/AccessibilityMenu';
+import { useExplain } from '../../core/hooks/useExplain';
+import { ChatInterface } from '../../components/chat/ChatInterface';
+
+interface ActivityItem {
+  id: number;
+  action: string;
+  details: string;
+  timestamp: string;
+}
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const explain = useExplain();
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8001/api/v1/activity/')
+      .then(res => res.json())
+      .then(data => setActivities(data.slice(0, 5)))
+      .catch(err => console.error(err));
+  }, []);
 
   const quickActions = [
     { icon: FileText, label: 'Government Schemes', color: 'text-[#2E7D32]', bg: 'bg-[#E8F5E9]', border: 'border-[#A5D6A7]' },
@@ -46,6 +65,7 @@ const Dashboard: React.FC = () => {
         <div className="p-6 border-t-2 border-gray-200">
           <button 
             onClick={() => navigate('/login')}
+            onMouseEnter={() => explain('Sign Out')}
             className="flex items-center justify-center md:justify-start w-full px-4 py-4 text-gray-700 hover:bg-[#FEE2E2] hover:text-[#D32F2F] hover:border-[#D32F2F] border-2 border-transparent rounded-xl font-bold text-xl transition-colors"
           >
             <LogOut className="w-8 h-8" />
@@ -103,6 +123,8 @@ const Dashboard: React.FC = () => {
                   <button 
                     key={idx} 
                     className={`flex items-center p-6 bg-white border-4 ${action.border} rounded-2xl hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-[#2E7D32] transition-transform hover:-translate-y-1 shadow-sm text-left`}
+                    onMouseEnter={() => explain(action.label)}
+                    onFocus={() => explain(action.label)}
                   >
                     <div className={`w-20 h-20 shrink-0 rounded-2xl ${action.bg} ${action.color} flex items-center justify-center mr-6 border-2 ${action.border}`}>
                       <action.icon className="w-10 h-10" />
@@ -123,24 +145,28 @@ const Dashboard: React.FC = () => {
               </h2>
               <GlassCard className="!p-0 overflow-hidden border-2 border-gray-300">
                 <ul className="divide-y-2 divide-gray-200">
-                  {[
-                    { title: 'Housing Scheme Application', status: 'In Progress', date: 'Today, 10:30 AM', color: 'text-blue-700', bg: 'bg-blue-100', border: 'border-blue-300' },
-                    { title: 'Disability Certificate Renewal', status: 'Approved', date: 'Yesterday', color: 'text-[#2E7D32]', bg: 'bg-[#E8F5E9]', border: 'border-[#A5D6A7]' },
-                    { title: 'Local NGO Match', status: 'Action Required', date: 'Oct 12', color: 'text-[#D32F2F]', bg: 'bg-[#FEE2E2]', border: 'border-[#FCA5A5]' },
-                  ].map((item, i) => (
-                    <li key={i} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                      <div>
-                        <p className="font-extrabold text-2xl text-gray-900 mb-1">{item.title}</p>
-                        <p className="text-lg text-gray-600 font-medium">{item.date}</p>
+                  {activities.length > 0 ? activities.map((item) => (
+                    <li key={item.id} className="p-6 hover:bg-gray-50 transition-colors flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 bg-[#E3F2FD] rounded-full text-[#1565C0]">
+                          <Activity className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <p className="font-extrabold text-2xl text-gray-900 mb-1">{item.details}</p>
+                          <p className="text-lg text-gray-600 font-medium">{new Date(item.timestamp).toLocaleString()}</p>
+                        </div>
                       </div>
-                      <span className={`text-xl font-bold px-4 py-2 rounded-xl border-2 ${item.bg} ${item.color} ${item.border} self-start sm:self-auto`}>
-                        {item.status}
+                      <span className="text-xl font-bold px-4 py-2 rounded-xl border-2 bg-gray-100 text-gray-700 border-gray-300 self-start sm:self-auto">
+                        {item.action}
                       </span>
                     </li>
-                  ))}
+                  )) : (
+                    <li className="p-8 text-center text-gray-500 font-medium text-lg">No recent activity.</li>
+                  )}
                 </ul>
               </GlassCard>
             </div>
+
             
             {/* Bottom Padding for floating action buttons */}
             <div className="h-24"></div>
@@ -149,10 +175,16 @@ const Dashboard: React.FC = () => {
       </main>
 
       {/* Floating AI Assistant Button */}
-      <button className="fixed bottom-6 right-6 z-50 px-8 py-5 rounded-full bg-[#2E7D32] text-white shadow-2xl flex items-center justify-center hover:bg-[#1B5E20] hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-offset-4 focus:ring-[#2E7D32] border-4 border-white">
+      <button 
+        onClick={() => setIsChatOpen(true)}
+        onMouseEnter={() => explain("Talk to Sahayak")}
+        className="fixed bottom-6 right-6 z-40 px-8 py-5 rounded-full bg-[#2E7D32] text-white shadow-2xl flex items-center justify-center hover:bg-[#1B5E20] hover:scale-105 transition-all focus:outline-none focus:ring-4 focus:ring-offset-4 focus:ring-[#2E7D32] border-4 border-white"
+      >
         <Mic className="w-8 h-8 mr-3" />
         <span className="text-2xl font-extrabold tracking-wide">Talk to Sahayak</span>
       </button>
+
+      {isChatOpen && <ChatInterface onClose={() => setIsChatOpen(false)} />}
 
       {/* Accessibility Menu */}
       <AccessibilityMenu />
