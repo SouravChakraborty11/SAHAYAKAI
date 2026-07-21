@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Bot, ArrowLeft, FileText, CheckCircle, Upload, Eye, Download, Search, 
@@ -58,8 +58,19 @@ export const AutomationPanel: React.FC = () => {
   const [isTracking, setIsTracking] = useState(false);
   const [copiedRef, setCopiedRef] = useState(false);
 
+  // Human Intervention State (Phase 7)
+  const [pendingInterventions, setPendingInterventions] = useState<any[]>([]);
+  const [interventionInput, setInterventionInput] = useState('');
+  const [activeInterventionSession, setActiveInterventionSession] = useState<any | null>(null);
+  const [isSubmittingIntervention, setIsSubmittingIntervention] = useState(false);
+  const [interventionMessage, setInterventionMessage] = useState<string | null>(null);
+
   // Chatbot State
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  useEffect(() => {
+    fetchPendingInterventions();
+  }, []);
 
   const schemeOptions = [
     { name: 'PM-Kisan Samman Nidhi', url: 'https://pmkisan.gov.in' },
@@ -138,6 +149,57 @@ export const AutomationPanel: React.FC = () => {
     }
   };
 
+  const fetchPendingInterventions = async () => {
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/intervention/pending');
+      if (res.ok) {
+        const data = await res.json();
+        setPendingInterventions(data.interventions || []);
+        if (data.interventions && data.interventions.length > 0) {
+          setActiveInterventionSession(data.interventions[0]);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch pending interventions', err);
+    }
+  };
+
+  const handleSubmitIntervention = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!interventionInput.trim()) return;
+
+    const session_id = activeInterventionSession ? activeInterventionSession.session_id : 'DEMO-INTERVENT-01';
+    setIsSubmittingIntervention(true);
+    setInterventionMessage(null);
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/intervention/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          session_id,
+          user_input: interventionInput.trim()
+        })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setInterventionMessage(`Input '${interventionInput}' submitted successfully. Playwright workflow resumed!`);
+        setInterventionInput('');
+        setTimeout(() => {
+          setActiveInterventionSession(null);
+          setInterventionMessage(null);
+          fetchPendingInterventions();
+        }, 3000);
+      }
+    } catch (err) {
+      console.error('Intervention submit error', err);
+      setInterventionMessage('Failed to submit input to automation server.');
+    } finally {
+      setIsSubmittingIntervention(false);
+    }
+  };
+
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedRef(true);
@@ -182,8 +244,80 @@ export const AutomationPanel: React.FC = () => {
             </div>
             <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Seamless Browser Automation Engine</h2>
             <p className="text-white/90 text-lg font-medium leading-relaxed">
-              Auto-fill scheme forms, upload documents, download official PDF receipts, and track application status automatically with headless Playwright.
+              Auto-fill scheme forms, upload documents, download official PDF receipts, handle Human Intervention (OTP/CAPTCHA), and track application status automatically with headless Playwright.
             </p>
+          </div>
+        </GlassCard>
+
+        {/* Phase 7: Human Intervention Manager Interactive Card */}
+        <GlassCard className="bg-gradient-to-r from-amber-500 to-orange-600 text-white !p-8 !rounded-3xl shadow-xl border-2 border-amber-300">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold text-amber-100 backdrop-blur-md">
+                <AlertTriangle className="w-4 h-4 text-amber-200" />
+                <span>Phase-7 Human Intervention Manager</span>
+              </div>
+              <h3 className="text-2xl font-extrabold">Active OTP / CAPTCHA Intervention Handler</h3>
+              <p className="text-amber-100 text-sm font-medium leading-relaxed">
+                When Playwright automation detects security verification (OTP or CAPTCHA) on government portals, the workflow automatically pauses, persists state, and prompts for human input to unblock and resume execution.
+              </p>
+            </div>
+
+            <div className="w-full md:w-auto bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 space-y-3 shrink-0 min-w-[320px]">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-extrabold text-amber-100 uppercase">Intervention Status</span>
+                <span className="px-2.5 py-0.5 bg-amber-200 text-amber-900 rounded-full font-bold text-xs">
+                  {activeInterventionSession ? activeInterventionSession.trigger_type || 'OTP/CAPTCHA' : 'READY'}
+                </span>
+              </div>
+
+              <form onSubmit={handleSubmitIntervention} className="space-y-3">
+                {activeInterventionSession && activeInterventionSession.captcha_image_path && (
+                  <div className="p-2 bg-white/20 rounded-xl flex items-center justify-center">
+                    <img 
+                      src={`http://127.0.0.1:8000/api/v1/automation/files/screenshots/${activeInterventionSession.captcha_image_path}`} 
+                      alt="CAPTCHA Challenge"
+                      className="max-h-16 rounded shadow-sm"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Enter OTP / CAPTCHA Code..."
+                    value={interventionInput}
+                    onChange={e => setInterventionInput(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-white text-gray-900 placeholder-gray-400 rounded-xl text-sm font-mono font-bold focus:ring-2 focus:ring-amber-300 focus:outline-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingIntervention}
+                  className="w-full py-3 bg-amber-950 text-white hover:bg-black rounded-xl font-extrabold text-xs transition-colors shadow-md flex items-center justify-center space-x-2"
+                >
+                  {isSubmittingIntervention ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin text-amber-300" />
+                      <span>Resuming Playwright...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                      <span>Submit Input & Resume Workflow</span>
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {interventionMessage && (
+                <div className="p-2.5 bg-emerald-900/80 border border-emerald-400/50 rounded-xl text-xs font-bold text-emerald-200 text-center">
+                  {interventionMessage}
+                </div>
+              )}
+            </div>
           </div>
         </GlassCard>
 

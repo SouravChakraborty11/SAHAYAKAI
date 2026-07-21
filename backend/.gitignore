@@ -17,3 +17,8 @@ env/
 scratch/
 qdrant_data/
 test_services.py
+storage/receipts/
+storage/screenshots/
+*.pdf
+*.png
+

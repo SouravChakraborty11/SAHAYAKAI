@@ -8,6 +8,8 @@ from playwright.async_api import async_playwright, Page, Browser, BrowserContext
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("BrowserAutomationService")
 
+from app.services.intervention_manager import intervention_manager
+
 STORAGE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../storage"))
 SCREENSHOTS_DIR = os.path.join(STORAGE_DIR, "screenshots")
 RECEIPTS_DIR = os.path.join(STORAGE_DIR, "receipts")
@@ -164,9 +166,42 @@ class BrowserAutomationService:
             s6 = await self.capture_screenshot(page, "step6_clicked_submit")
             if s6: step_screenshots.append({"step": "Clicked submit", "filename": s6})
 
-            # Step 7: Confirmation page reached (Real Govt Portal Security/OTP Verification Boundary)
+            # Step 7: Human Intervention Detection, Pause & Resume
+            has_challenge, trigger_type = await intervention_manager.detect_challenge(page)
+            if has_challenge:
+                session_id = f"INTERVENT-{datetime.now().strftime('%Y%m%d%H%M%S')}"
+                logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] [HUMAN INTERVENTION] Detected {trigger_type} challenge on portal. Workflow PAUSED for user input.")
+                
+                s_pause = await self.capture_screenshot(page, f"step7_paused_for_{trigger_type.lower()}")
+                if s_pause: step_screenshots.append({"step": f"PAUSED for {trigger_type}", "filename": s_pause})
+
+                # Pause execution thread asynchronously (10 second timeout for automated tests or wait for resume API)
+                success, human_input = await intervention_manager.pause_and_wait(
+                    session_id=session_id,
+                    trigger_type=trigger_type,
+                    page=page,
+                    screenshot_dir=self.screenshots_dir,
+                    timeout_seconds=15
+                )
+
+                if success and human_input:
+                    logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] [HUMAN INTERVENTION] Received user input '{human_input}'. Filling portal challenge field & RESUMING workflow.")
+                    # Fill OTP or CAPTCHA field with received input
+                    captcha_in = page.locator("#ContentPlaceHolder1_txtcaptcha, #txtcaptcha, input[name*='captcha']").first
+                    if await captcha_in.count() > 0:
+                        await captcha_in.fill(human_input)
+                    otp_in = page.locator("#ContentPlaceHolder1_txtOTP, #txtotp, input[name*='otp']").first
+                    if await otp_in.count() > 0:
+                        await otp_in.fill(human_input)
+
+                    await page.wait_for_timeout(2000)
+                    logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Workflow RESUMED and completed successfully!")
+                else:
+                    logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] [HUMAN INTERVENTION] No input received within timeout (or test mode). Preserving captured state.")
+
+            # Step 8: Confirmation page reached
             logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] Confirmation page reached (Aadhaar OTP / Portal Verification step)")
-            s7 = await self.capture_screenshot(page, "step7_confirmation_reached")
+            s7 = await self.capture_screenshot(page, "step8_confirmation_reached")
             if s7: step_screenshots.append({"step": "Confirmation page reached", "filename": s7})
 
             # Intercept/Generate PDF Receipt
