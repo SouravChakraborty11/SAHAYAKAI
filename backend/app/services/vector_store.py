@@ -131,29 +131,45 @@ class VectorStoreService:
         print(f"Inserted {len(points)} care & community providers into Qdrant.")
 
     def search(self, query: str, limit: int = 3) -> List[Dict[str, Any]]:
-        if not self.gemini_client:
-            return []
-            
-        query_vector = self._get_embedding(query)
-        search_result = self.client.search(
-            collection_name=SCHEMES_COLLECTION_NAME,
-            query_vector=query_vector,
-            limit=limit
-        )
-        
-        return [hit.payload for hit in search_result]
+        try:
+            query_vector = self._get_embedding(query)
+            if hasattr(self.client, 'query_points'):
+                res = self.client.query_points(collection_name=SCHEMES_COLLECTION_NAME, query=query_vector, limit=limit)
+                return [hit.payload for hit in res.points]
+            elif hasattr(self.client, 'search'):
+                res = self.client.search(collection_name=SCHEMES_COLLECTION_NAME, query_vector=query_vector, limit=limit)
+                return [hit.payload for hit in res]
+        except Exception as e:
+            print(f"Qdrant scheme search exception: {e}")
+        return []
 
     def search_care_community(self, query: str, limit: int = 3) -> List[Dict[str, Any]]:
-        if not self.gemini_client:
-            return []
+        try:
+            query_vector = self._get_embedding(query)
+            if hasattr(self.client, 'query_points'):
+                res = self.client.query_points(collection_name=CARE_COLLECTION_NAME, query=query_vector, limit=limit)
+                return [hit.payload for hit in res.points]
+            elif hasattr(self.client, 'search'):
+                res = self.client.search(collection_name=CARE_COLLECTION_NAME, query_vector=query_vector, limit=limit)
+                return [hit.payload for hit in res]
+        except Exception as e:
+            print(f"Qdrant care search exception: {e}")
             
-        query_vector = self._get_embedding(query)
-        search_result = self.client.search(
-            collection_name=CARE_COLLECTION_NAME,
-            query_vector=query_vector,
-            limit=limit
-        )
-        
-        return [hit.payload for hit in search_result]
+        # Offline JSON search fallback if Qdrant client query format differs
+        try:
+            if os.path.exists(self.care_data_path):
+                with open(self.care_data_path, "r", encoding="utf-8") as f:
+                    items = json.load(f)
+                words = [w.lower() for w in query.split() if len(w) > 2]
+                scored = []
+                for item in items:
+                    blob = f"{item['name']} {item['category']} {item['location']} {item['description']} {' '.join(item.get('services', []))}".lower()
+                    score = sum(1 for w in words if w in blob)
+                    scored.append((score, item))
+                scored.sort(key=lambda x: x[0], reverse=True)
+                return [item for score, item in scored[:limit]]
+        except Exception:
+            pass
+        return []
 
 vector_store = VectorStoreService()

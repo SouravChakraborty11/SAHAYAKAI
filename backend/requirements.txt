@@ -11,3 +11,4 @@ google-auth
 google-genai
 sse-starlette
 qdrant-client
+playwright

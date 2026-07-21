@@ -127,6 +127,8 @@ const Dashboard: React.FC = () => {
                         setIsChatOpen(true);
                       } else if (action.label === 'NGO Support' || action.label === 'Caregiver Assistance') {
                         navigate('/care-community');
+                      } else if (action.label === 'Application Tracking') {
+                        navigate('/automation');
                       }
                     }}
                     className={`flex items-center p-6 bg-white border-4 ${action.border} rounded-2xl hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-[#2E7D32] transition-transform hover:-translate-y-1 shadow-sm text-left`}
