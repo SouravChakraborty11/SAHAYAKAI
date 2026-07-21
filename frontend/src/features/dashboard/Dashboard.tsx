@@ -8,6 +8,7 @@ import { GlassCard } from '../../components/GlassCard';
 import { AccessibilityMenu } from '../../components/AccessibilityMenu';
 import { useExplain } from '../../core/hooks/useExplain';
 import { ChatInterface } from '../../components/chat/ChatInterface';
+import { useNotifications, NotificationBell, NotificationDrawer, NotificationToasts } from '../notifications';
 
 interface ActivityItem {
   id: number;
@@ -20,7 +21,21 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const explain = useExplain();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
+
+  const {
+    notifications,
+    unreadCount,
+    loading: notificationsLoading,
+    error: notificationsError,
+    toasts,
+    refetch: refetchNotifications,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    dismissToast
+  } = useNotifications();
 
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/v1/activity/')
@@ -85,10 +100,10 @@ const Dashboard: React.FC = () => {
           </div>
           <div className="flex-1" />
           <div className="flex items-center space-x-6">
-            <button className="p-3 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100 border-2 border-transparent focus:border-gray-400 transition-colors relative">
-              <Bell className="w-8 h-8" />
-              <span className="absolute top-2 right-2 w-4 h-4 bg-[#D32F2F] rounded-full border-2 border-white"></span>
-            </button>
+            <NotificationBell
+              unreadCount={unreadCount}
+              onClick={() => setIsNotificationOpen(true)}
+            />
             <button className="flex items-center space-x-3 p-2 pr-4 bg-gray-50 border-2 border-gray-200 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-[#2E7D32]">
               <div className="h-12 w-12 rounded-full bg-[#2E7D32] flex items-center justify-center text-white font-bold text-xl">
                 <User className="w-6 h-6" />
@@ -194,6 +209,21 @@ const Dashboard: React.FC = () => {
       </button>
 
       {isChatOpen && <ChatInterface onClose={() => setIsChatOpen(false)} />}
+
+      <NotificationDrawer
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+        notifications={notifications}
+        unreadCount={unreadCount}
+        loading={notificationsLoading}
+        error={notificationsError}
+        onRefresh={refetchNotifications}
+        onMarkAsRead={markAsRead}
+        onMarkAllAsRead={markAllAsRead}
+        onDelete={deleteNotification}
+      />
+
+      <NotificationToasts toasts={toasts} onDismiss={dismissToast} />
 
       {/* Accessibility Menu */}
       <AccessibilityMenu />
