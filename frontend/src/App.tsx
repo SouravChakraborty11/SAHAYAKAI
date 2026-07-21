@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AccessibilityProvider } from './core/contexts/AccessibilityContext';
 import Login from './features/auth/Login';
 import Dashboard from './features/dashboard/Dashboard';
+import CareCommunityHub from './features/care/CareCommunityHub';
 
 const App: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/care-community" element={<CareCommunityHub />} />
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

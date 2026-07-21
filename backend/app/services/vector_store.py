@@ -6,11 +6,13 @@ from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams, PointStruct
 from app.core.ai.gemini import get_gemini_client
 
-COLLECTION_NAME = "government_schemes"
+SCHEMES_COLLECTION_NAME = "government_schemes"
+CARE_COLLECTION_NAME = "care_community"
 
 class VectorStoreService:
-    def __init__(self, data_path: str = "data/schemes.json", qdrant_path: str = "qdrant_data"):
+    def __init__(self, data_path: str = "data/schemes.json", care_data_path: str = "data/care_community.json", qdrant_path: str = "qdrant_data"):
         self.data_path = data_path
+        self.care_data_path = care_data_path
         self.qdrant_path = qdrant_path
         self._client = None
         self.gemini_client = get_gemini_client()
@@ -27,31 +29,50 @@ class VectorStoreService:
             print("Warning: Gemini client not initialized. Using dummy vectors for Qdrant initialization.")
 
         collections = self._client.get_collections().collections
-        if any(c.name == COLLECTION_NAME for c in collections):
-            print(f"Collection {COLLECTION_NAME} already exists.")
-            return
+        
+        # Initialize Schemes Collection
+        if not any(c.name == SCHEMES_COLLECTION_NAME for c in collections):
+            print(f"Creating collection {SCHEMES_COLLECTION_NAME}...")
+            self._client.create_collection(
+                collection_name=SCHEMES_COLLECTION_NAME,
+                vectors_config=VectorParams(size=768, distance=Distance.COSINE),
+            )
+            self._populate_data()
 
-        print(f"Creating collection {COLLECTION_NAME}...")
-        self._client.create_collection(
-            collection_name=COLLECTION_NAME,
-            vectors_config=VectorParams(size=768, distance=Distance.COSINE),
-        )
-        self._populate_data()
+        # Initialize Care & Community Collection
+        if not any(c.name == CARE_COLLECTION_NAME for c in collections):
+            print(f"Creating collection {CARE_COLLECTION_NAME}...")
+            self._client.create_collection(
+                collection_name=CARE_COLLECTION_NAME,
+                vectors_config=VectorParams(size=768, distance=Distance.COSINE),
+            )
+            self._populate_care_data()
 
     def _get_embedding(self, text: str) -> List[float]:
-        if not self.gemini_client:
-            # Return dummy vector if no API key is provided
-            return [0.0] * 768
-            
-        try:
-            response = self.gemini_client.models.embed_content(
-                model='text-embedding-004',
-                contents=text
-            )
-            return response.embeddings[0].values
-        except Exception as e:
-            print(f"Embedding error: {e}")
-            return [0.0] * 768
+        if self.gemini_client:
+            try:
+                response = self.gemini_client.models.embed_content(
+                    model='embedding-001',
+                    contents=text
+                )
+                if hasattr(response, 'embeddings') and response.embeddings:
+                    return response.embeddings[0].values
+            except Exception:
+                pass
+                
+        # Deterministic lightweight 768-dim hash vector fallback for offline / rate-limited search
+        import hashlib
+        vector = [0.0] * 768
+        words = text.lower().split()
+        for word in words:
+            h = int(hashlib.md5(word.encode()).hexdigest(), 16)
+            idx = h % 768
+            vector[idx] += 1.0
+        # Normalize
+        norm = sum(v*v for v in vector) ** 0.5
+        if norm > 0:
+            vector = [v / norm for v in vector]
+        return vector
 
     def _populate_data(self):
         if not os.path.exists(self.data_path):
@@ -63,12 +84,8 @@ class VectorStoreService:
 
         points = []
         for scheme in schemes:
-            # Create a rich text representation for embedding
-            text_to_embed = f"Scheme: {scheme['name']}\\nDescription: {scheme['description']}\\nEligibility: {', '.join(scheme['eligibility_criteria'])}\\nBenefits: {', '.join(scheme['benefits'])}"
+            text_to_embed = f"Scheme: {scheme['name']}\nDescription: {scheme['description']}\nEligibility: {', '.join(scheme['eligibility_criteria'])}\nBenefits: {', '.join(scheme['benefits'])}"
             vector = self._get_embedding(text_to_embed)
-            
-            # Using uuid5 or simple string hash for UUID would be better, but Qdrant also accepts integer IDs. 
-            # We'll generate a random UUID for simplicity, or just use string id if supported (Qdrant supports UUIDs)
             point_id = str(uuid.uuid4())
             
             points.append(
@@ -80,10 +97,38 @@ class VectorStoreService:
             )
 
         self.client.upsert(
-            collection_name=COLLECTION_NAME,
+            collection_name=SCHEMES_COLLECTION_NAME,
             points=points
         )
         print(f"Inserted {len(points)} schemes into Qdrant.")
+
+    def _populate_care_data(self):
+        if not os.path.exists(self.care_data_path):
+            print(f"Dataset {self.care_data_path} not found.")
+            return
+
+        with open(self.care_data_path, "r", encoding="utf-8") as f:
+            items = json.load(f)
+
+        points = []
+        for item in items:
+            text_to_embed = f"Name: {item['name']}\nType: {item['type']}\nCategory: {item['category']}\nLocation: {item['location']}\nDescription: {item['description']}\nServices: {', '.join(item.get('services', []))}"
+            vector = self._get_embedding(text_to_embed)
+            point_id = str(uuid.uuid4())
+            
+            points.append(
+                PointStruct(
+                    id=point_id,
+                    vector=vector,
+                    payload=item
+                )
+            )
+
+        self.client.upsert(
+            collection_name=CARE_COLLECTION_NAME,
+            points=points
+        )
+        print(f"Inserted {len(points)} care & community providers into Qdrant.")
 
     def search(self, query: str, limit: int = 3) -> List[Dict[str, Any]]:
         if not self.gemini_client:
@@ -91,7 +136,20 @@ class VectorStoreService:
             
         query_vector = self._get_embedding(query)
         search_result = self.client.search(
-            collection_name=COLLECTION_NAME,
+            collection_name=SCHEMES_COLLECTION_NAME,
+            query_vector=query_vector,
+            limit=limit
+        )
+        
+        return [hit.payload for hit in search_result]
+
+    def search_care_community(self, query: str, limit: int = 3) -> List[Dict[str, Any]]:
+        if not self.gemini_client:
+            return []
+            
+        query_vector = self._get_embedding(query)
+        search_result = self.client.search(
+            collection_name=CARE_COLLECTION_NAME,
             query_vector=query_vector,
             limit=limit
         )

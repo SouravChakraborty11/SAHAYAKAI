@@ -1,0 +1,81 @@
+[
+  {
+    "id": "ngo-1",
+    "type": "ngo",
+    "name": "Samarthanam Trust for the Disabled",
+    "category": "Disability Support",
+    "location": "Bengaluru, Karnataka",
+    "contact": "+91 80 2658 2570",
+    "email": "info@samarthanam.org",
+    "description": "Provides education, vocational training, assistive devices, and livelihood support for visually impaired and physically challenged individuals.",
+    "services": ["Assistive Devices", "Vocational Training", "Inclusive Education", "Job Placement"]
+  },
+  {
+    "id": "ngo-2",
+    "type": "ngo",
+    "name": "Helpage India",
+    "category": "Elderly Care",
+    "location": "New Delhi & Pan India",
+    "contact": "1800-180-5789",
+    "email": "headoffice@helpageindia.org",
+    "description": "Leading national NGO advocating for elderly rights, mobile healthcare units, old age homes, and digital literacy for senior citizens.",
+    "services": ["Mobile Healthcare", "Elder Helpline", "Cataract Surgeries", "Old Age Home Support"]
+  },
+  {
+    "id": "ngo-3",
+    "type": "ngo",
+    "name": "Amar Seva Sangam",
+    "category": "Rehabilitation & Disability",
+    "location": "Ayikudi, Tamil Nadu",
+    "contact": "+91 4633 249115",
+    "email": "mail@amarseva.org",
+    "description": "Empowering persons with disabilities through early intervention, spinal cord injury rehab, and village-based rehabilitation programs.",
+    "services": ["Spinal Cord Rehab", "Early Intervention", "Special Education", "Physiotherapy"]
+  },
+  {
+    "id": "caregiver-1",
+    "type": "caregiver",
+    "name": "Sunita Sharma, RN",
+    "category": "Home Nursing & Elderly Care",
+    "location": "Mumbai, Maharashtra",
+    "contact": "+91 98200 12345",
+    "experience": "8 years",
+    "rating": 4.9,
+    "description": "Certified nurse specializing in post-stroke recovery, tracheostomy care, medication management, and daily living assistance for elderly patients.",
+    "services": ["Post-Operative Care", "Bedridden Patient Care", "Vital Monitoring", "Medication Admin"]
+  },
+  {
+    "id": "caregiver-2",
+    "type": "caregiver",
+    "name": "Rajesh Kumar, MPT",
+    "category": "Physiotherapist & Mobility Specialist",
+    "location": "Delhi NCR",
+    "contact": "+91 98111 67890",
+    "experience": "10 years",
+    "rating": 4.8,
+    "description": "Specialized in neuro-rehabilitation, joint mobilization, paralysis recovery, and home-visit physical therapy sessions.",
+    "services": ["Neuro Rehab", "Geriatric Physiotherapy", "Pain Management", "Mobility Training"]
+  },
+  {
+    "id": "rehab-1",
+    "type": "rehab_center",
+    "name": "NIMHANS Neuro-Rehabilitation Centre",
+    "category": "Neurological & Mental Health Rehab",
+    "location": "Bengaluru, Karnataka",
+    "contact": "+91 80 2699 5000",
+    "email": "neurorehab@nimhans.ac.in",
+    "description": "Premier national institute providing state-of-the-art neurological rehabilitation, speech therapy, cognitive retraining, and occupational therapy.",
+    "services": ["Cognitive Retraining", "Speech Therapy", "Occupational Therapy", "Robotic Gait Training"]
+  },
+  {
+    "id": "rehab-2",
+    "type": "rehab_center",
+    "name": "Mobility India Disability & Rehab Centre",
+    "category": "Orthotic & Prosthetic Rehab",
+    "location": "Bengaluru, Karnataka",
+    "contact": "+91 80 2649 2222",
+    "email": "e-mail@mobility-india.org",
+    "description": "Specialized center offering custom prosthetic limbs, orthotic braces, wheelchair modifications, and comprehensive gait therapy.",
+    "services": ["Prosthetics & Orthotics", "Wheelchair Fitting", "Amputee Rehab", "Pediatric Rehab"]
+  }
+]

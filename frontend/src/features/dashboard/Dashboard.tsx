@@ -125,6 +125,8 @@ const Dashboard: React.FC = () => {
                     onClick={() => {
                       if (action.label === 'Voice Assistant') {
                         setIsChatOpen(true);
+                      } else if (action.label === 'NGO Support' || action.label === 'Caregiver Assistance') {
+                        navigate('/care-community');
                       }
                     }}
                     className={`flex items-center p-6 bg-white border-4 ${action.border} rounded-2xl hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-[#2E7D32] transition-transform hover:-translate-y-1 shadow-sm text-left`}
