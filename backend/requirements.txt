@@ -10,3 +10,4 @@ python-dotenv
 google-auth
 google-genai
 sse-starlette
+qdrant-client

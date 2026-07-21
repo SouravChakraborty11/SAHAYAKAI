@@ -16,7 +16,7 @@ async def detect_intent(message: str) -> str:
     
     try:
         response = await client.aio.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.5-flash',
             contents=prompt
         )
         intent = response.text.strip().upper()

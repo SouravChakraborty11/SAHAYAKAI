@@ -75,13 +75,13 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
     formData.append('file', file);
 
     try {
-      const res = await fetch('http://127.0.0.1:8001/api/v1/tools/ocr', {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/tools/ocr', {
         method: 'POST',
         body: formData,
       });
       const data = await res.json();
       if (data.extracted_text) {
-        setInput(prev => prev + '\\n' + data.extracted_text);
+        setInput(prev => prev + '\n' + data.extracted_text);
       }
     } catch (error) {
       console.error('OCR Error', error);
@@ -101,7 +101,7 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
 
     // Activity Log
     try {
-      await fetch('http://127.0.0.1:8001/api/v1/activity/', {
+      await fetch('http://127.0.0.1:8000/api/v1/activity/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'CHAT_MESSAGE', details: 'Sent a message to Sahayak AI' })
@@ -109,7 +109,7 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
     } catch (e) {}
 
     try {
-      const res = await fetch('http://127.0.0.1:8001/api/v1/chat/stream', {
+      const res = await fetch('http://127.0.0.1:8000/api/v1/chat/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMsg.text })
@@ -122,16 +122,18 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
       
       setMessages(prev => [...prev, { id: aiMsgId, sender: 'ai', text: '' }]);
 
+      let buffer = '';
       while (reader) {
         const { value, done } = await reader.read();
         if (done) break;
-        const chunk = decoder.decode(value);
+        buffer += decoder.decode(value, { stream: true });
         
-        // Very basic SSE parsing
-        const lines = chunk.split('\\n');
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ''; // Keep the last incomplete line in the buffer
+        
         for (const line of lines) {
           if (line.startsWith('data: ') && !line.includes('[DONE]') && !line.includes('{"session_id"')) {
-            aiText += line.replace('data: ', '');
+            aiText += line.replace('data: ', '').replace(/\r/g, '');
             setMessages(prev => prev.map(m => m.id === aiMsgId ? { ...m, text: aiText } : m));
           }
         }
@@ -139,7 +141,7 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
 
       // Automatically translate if language is not EN
       if (language !== 'en') {
-        const tRes = await fetch('http://127.0.0.1:8001/api/v1/tools/translate', {
+        const tRes = await fetch('http://127.0.0.1:8000/api/v1/tools/translate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: aiText, target_language: language === 'hi' ? 'Hindi' : 'Bengali' })

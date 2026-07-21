@@ -26,7 +26,7 @@ class GeneralAgent(BaseAgent):
             
         try:
             response = await client.aio.models.generate_content_stream(
-                model='gemini-2.5-flash',
+                model='gemini-3.5-flash',
                 contents=formatted_history,
                 config=config
             )

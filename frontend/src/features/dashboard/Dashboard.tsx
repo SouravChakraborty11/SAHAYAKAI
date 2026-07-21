@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8001/api/v1/activity/')
+    fetch('http://127.0.0.1:8000/api/v1/activity/')
       .then(res => res.json())
       .then(data => setActivities(data.slice(0, 5)))
       .catch(err => console.error(err));
@@ -122,6 +122,11 @@ const Dashboard: React.FC = () => {
                 {quickActions.map((action, idx) => (
                   <button 
                     key={idx} 
+                    onClick={() => {
+                      if (action.label === 'Voice Assistant') {
+                        setIsChatOpen(true);
+                      }
+                    }}
                     className={`flex items-center p-6 bg-white border-4 ${action.border} rounded-2xl hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-[#2E7D32] transition-transform hover:-translate-y-1 shadow-sm text-left`}
                     onMouseEnter={() => explain(action.label)}
                     onFocus={() => explain(action.label)}

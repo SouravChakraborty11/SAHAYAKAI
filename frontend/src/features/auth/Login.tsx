@@ -7,6 +7,7 @@ import {
 import { GlassCard } from '../../components/GlassCard';
 import { Button } from '../../components/Button';
 import { useAccessibility } from '../../core/contexts/AccessibilityContext';
+import { ChatInterface } from '../../components/chat/ChatInterface';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,7 +171,10 @@ const Login: React.FC = () => {
           {/* Bottom Controls */}
           <div className="flex flex-col xl:flex-row items-center justify-between w-full mt-10 relative z-10 gap-6">
             {/* Talk to Sahayak */}
-            <button className="flex items-center justify-center w-full xl:w-auto space-x-3 bg-white px-8 py-4 rounded-full border border-gray-200 shadow-md hover:bg-gray-50 transition-colors focus:ring-4 focus:ring-[#2E7D32]/50">
+            <button 
+              onClick={() => setIsChatOpen(true)}
+              className="flex items-center justify-center w-full xl:w-auto space-x-3 bg-white px-8 py-4 rounded-full border border-gray-200 shadow-md hover:bg-gray-50 transition-colors focus:ring-4 focus:ring-[#2E7D32]/50"
+            >
               <Mic className="w-7 h-7 text-[#2E7D32]" />
               <div className="text-left">
                 <div className="font-bold text-[#2E7D32] text-lg">Talk to Sahayak</div>
@@ -320,6 +325,8 @@ const Login: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {isChatOpen && <ChatInterface onClose={() => setIsChatOpen(false)} />}
     </div>
   );
 };

@@ -16,7 +16,7 @@ class NGOAgent(BaseAgent):
         
         try:
             response = await client.aio.models.generate_content_stream(
-                model='gemini-2.5-flash',
+                model='gemini-3.5-flash',
                 contents=prompt
             )
             async for chunk in response:

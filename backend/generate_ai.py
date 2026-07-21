@@ -34,7 +34,7 @@ async def detect_intent(message: str) -> str:
     
     try:
         response = await client.aio.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.5-flash',
             contents=prompt
         )
         intent = response.text.strip().upper()
@@ -73,7 +73,7 @@ class GeneralAgent(BaseAgent):
             
         try:
             response = await client.aio.models.generate_content_stream(
-                model='gemini-2.5-flash',
+                model='gemini-3.5-flash',
                 contents=formatted_history,
                 config=config
             )
@@ -104,7 +104,7 @@ class SchemeAgent(BaseAgent):
         
         try:
             response = await client.aio.models.generate_content_stream(
-                model='gemini-2.5-flash',
+                model='gemini-3.5-flash',
                 contents=prompt
             )
             async for chunk in response:
@@ -132,7 +132,7 @@ class NGOAgent(BaseAgent):
         
         try:
             response = await client.aio.models.generate_content_stream(
-                model='gemini-2.5-flash',
+                model='gemini-3.5-flash',
                 contents=prompt
             )
             async for chunk in response:
