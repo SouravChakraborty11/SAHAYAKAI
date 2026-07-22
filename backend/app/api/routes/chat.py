@@ -54,9 +54,14 @@ async def chat_stream(request: ChatRequest, background_tasks: BackgroundTasks, d
         yield {"event": "meta", "data": f'{{"session_id": {session_id}, "intent": "{intent}"}}'}
         
         try:
-            async for chunk in agent.process(request.message, history):
+            from app.lyzr.manager import agent_manager
+            async for chunk in agent_manager.process_message(
+                session_id=str(session_id),
+                user_id="guest",
+                message=request.message,
+                intent=intent
+            ):
                 full_response += chunk
-                # Yield text chunks
                 yield {"event": "message", "data": chunk}
         except Exception as e:
             yield {"event": "error", "data": str(e)}

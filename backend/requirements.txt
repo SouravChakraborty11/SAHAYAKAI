@@ -11,3 +11,7 @@ google-auth
 google-genai
 sse-starlette
 aiosqlite
+qdrant-client
+lyzr
+google-adk
+playwright

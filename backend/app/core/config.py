@@ -31,6 +31,9 @@ class Settings(BaseSettings):
 
     GEMINI_API_KEY: str = ""
 
+    GCS_BUCKET_NAME: str = "sahayak-documents"
+    GCS_CREDENTIALS_FILE: str = ""
+
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
         return self.DATABASE_URL
@@ -38,6 +41,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=True,
+        extra="ignore"
     )
 
 
