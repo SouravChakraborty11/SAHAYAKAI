@@ -1,27 +1,44 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
+    """
+    Application configuration.
+
+    Prototype:
+        SQLite + Gemini
+
+    Future:
+        PostgreSQL
+        Redis
+        Google ADK
+        Qdrant
+    """
+
     PROJECT_NAME: str = "SAHAYAK AI API"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
-    
-    POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
-    POSTGRES_SERVER: str = "localhost"
-    POSTGRES_PORT: str = "5432"
-    POSTGRES_DB: str = "sahayak"
-    
+
+    DATABASE_URL: str = "sqlite+aiosqlite:///./sahayak.db"
+
+    SECRET_KEY: str = "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
+
+    ALGORITHM: str = "HS256"
+
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8
+
+    GOOGLE_CLIENT_ID: str = ""
+
+    GEMINI_API_KEY: str = ""
+
     @property
     def SQLALCHEMY_DATABASE_URI(self) -> str:
-        return "sqlite+aiosqlite:///./sahayak.db"
-    
-    SECRET_KEY: str = "YOUR_SUPER_SECRET_KEY_REPLACE_IN_PRODUCTION"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8 # 8 days
-    
-    GOOGLE_CLIENT_ID: str = "YOUR_GOOGLE_CLIENT_ID"
-    GEMINI_API_KEY: str = "YOUR_GEMINI_API_KEY"
-    
-    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
+        return self.DATABASE_URL
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+    )
+
 
 settings = Settings()
