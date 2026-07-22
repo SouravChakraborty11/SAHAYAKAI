@@ -171,15 +171,15 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900/50">
           {messages.map(msg => (
             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] rounded-2xl p-3 ${msg.sender === 'user' ? 'bg-[#2E7D32] text-white rounded-br-none' : 'bg-white border-2 border-gray-200 text-gray-800 rounded-bl-none shadow-sm'}`}>
+              <div className={`max-w-[80%] rounded-2xl p-3 ${msg.sender === 'user' ? 'bg-[#2E7D32] text-white rounded-br-none' : 'bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none shadow-sm'}`}>
                 <p className="text-lg leading-relaxed">{msg.text}</p>
                 {msg.sender === 'ai' && (
                   <button 
                     onClick={() => speakText(msg.text)}
-                    className="mt-2 text-gray-500 hover:text-[#2E7D32] focus:outline-none"
+                    className="mt-2 text-gray-500 dark:text-gray-400 hover:text-[#2E7D32] focus:outline-none"
                     onMouseEnter={() => explain("Read out loud")}
                   >
                     <Volume2 className="w-5 h-5" />
@@ -190,20 +190,20 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
           ))}
           {isProcessing && (
             <div className="flex justify-start">
-              <div className="bg-white border-2 border-gray-200 rounded-2xl rounded-bl-none p-3 shadow-sm flex items-center">
+              <div className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl rounded-bl-none p-3 shadow-sm flex items-center">
                 <RefreshCw className="w-5 h-5 animate-spin text-[#2E7D32] mr-2" />
-                <span className="text-gray-500">Processing...</span>
+                <span className="text-gray-500 dark:text-gray-400">Processing...</span>
               </div>
             </div>
           )}
         </div>
 
         {/* Input Area */}
-        <div className="p-3 bg-white border-t-2 border-gray-200">
+        <div className="p-3 bg-white dark:bg-gray-800 border-t-2 border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-2">
             <button 
               onClick={() => fileInputRef.current?.click()}
-              className="p-3 text-gray-500 hover:text-[#2E7D32] hover:bg-gray-100 rounded-full transition-colors focus:ring-4 focus:ring-[#2E7D32]"
+              className="p-3 text-gray-500 dark:text-gray-400 hover:text-[#2E7D32] hover:bg-gray-100 dark:bg-gray-800 rounded-full transition-colors focus:ring-4 focus:ring-[#2E7D32]"
               title="Upload Image for OCR"
               onMouseEnter={() => explain("Upload Image for Text Extraction")}
             >
@@ -222,13 +222,13 @@ export const ChatInterface: React.FC<{ onClose: () => void }> = ({ onClose }) =>
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && sendMessage()}
-              className="flex-1 bg-gray-100 border-2 border-transparent focus:border-[#2E7D32] rounded-xl px-4 py-3 text-lg focus:outline-none focus:bg-white transition-colors"
+              className="flex-1 bg-gray-100 dark:bg-gray-800 border-2 border-transparent focus:border-[#2E7D32] rounded-xl px-4 py-3 text-lg focus:outline-none focus:bg-white dark:bg-gray-800 transition-colors"
               placeholder="Type your message..."
             />
 
             <button 
               onClick={toggleListening}
-              className={`p-3 rounded-full transition-colors focus:ring-4 focus:ring-[#2E7D32] ${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'text-gray-500 hover:text-[#2E7D32] hover:bg-gray-100'}`}
+              className={`p-3 rounded-full transition-colors focus:ring-4 focus:ring-[#2E7D32] ${isListening ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'text-gray-500 dark:text-gray-400 hover:text-[#2E7D32] hover:bg-gray-100 dark:bg-gray-800'}`}
               onMouseEnter={() => explain(isListening ? "Stop listening" : "Start voice typing")}
             >
               <Mic className="w-6 h-6" />

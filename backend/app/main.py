@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.routes import auth, users, chat, tools, activity, schemes, appointments, automation, intervention, storage, notifications
+from app.api.routes import auth, users, chat, tools, activity, schemes, appointments, automation, intervention, storage, notifications, applications
 
 from contextlib import asynccontextmanager
 from app.core.database import engine, Base
@@ -14,6 +14,8 @@ import app.models.intervention
 import app.models.document
 import app.models.receipt
 import app.models.notification
+import os
+from fastapi.staticfiles import StaticFiles
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -53,7 +55,13 @@ app.include_router(automation.router, prefix=f"{settings.API_V1_STR}/automation"
 app.include_router(intervention.router, prefix=f"{settings.API_V1_STR}/intervention", tags=["intervention"])
 app.include_router(storage.router, prefix=f"{settings.API_V1_STR}/storage", tags=["storage"])
 app.include_router(notifications.router, prefix=f"{settings.API_V1_STR}/notifications", tags=["notifications"])
+app.include_router(applications.router, prefix=f"{settings.API_V1_STR}/applications", tags=["applications"])
 
 @app.get("/")
 async def root():
     return {"message": "Welcome to SAHAYAK AI API"}
+
+# Create uploads directory if it doesn't exist
+os.makedirs("uploads/profiles", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+

@@ -1,0 +1,14 @@
+node_modules
+.venv
+venv
+__pycache__
+*.pyc
+.git
+.gitignore
+.env
+dist
+build
+qdrant_data
+*.log
+backend/storage/receipts/*.pdf
+backend/storage/screenshots/*.png

@@ -1,0 +1,157 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "schemes": "Schemes",
+    "applications": "Applications",
+    "profile": "Profile",
+    "settings": "Settings",
+    "signOut": "Sign Out"
+  },
+  "accessibility": {
+    "title": "Accessibility Settings",
+    "highContrast": "High Contrast",
+    "largeText": "Large Text",
+    "voiceMode": "Voice Mode",
+    "readScreen": "Read Screen",
+    "reduceMotion": "Reduce Motion",
+    "language": "Language"
+  },
+  "dashboard": {
+    "profile": "Profile",
+    "welcome": "Welcome back",
+    "user": "User",
+    "welcomeDesc": "Access community services, track government schemes, and find support all in one place.",
+    "activeApplications": "Active Applications",
+    "newNotifications": "New Notifications",
+    "eligibleSchemes": "Eligible Schemes",
+    "helpTitle": "How can we help you today?",
+    "recentActivity": "Your Recent Activity",
+    "noActivity": "No recent activity.",
+    "talkToSahayak": "Talk to Sahayak",
+    "actions": {
+      "govSchemes": "Government Schemes",
+      "eligibility": "Eligibility Checker",
+      "ngo": "NGO Support",
+      "caregiver": "Caregiver Assistance",
+      "tracking": "Application Tracking",
+      "voice": "Voice Assistant"
+    }
+  },
+  "applications": {
+    "title": "My Applications",
+    "refresh": "Refresh",
+    "searchPlaceholder": "Search by reference, scheme, or applicant...",
+    "search": "Search",
+    "status": {
+      "all": "All",
+      "submitted": "Submitted",
+      "underVerification": "Under Verification",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "completed": "Completed"
+    },
+    "noApplications": "No Applications Found",
+    "noApplicationsDesc": "You have not submitted any applications yet.",
+    "applyScheme": "Apply for a Scheme",
+    "loading": "Loading applications...",
+    "sortBy": {
+      "date": "Date Submitted",
+      "scheme": "Scheme Name",
+      "applicant": "Applicant Name",
+      "status": "Status"
+    },
+    "details": {
+      "applicant": "Applicant Name",
+      "phone": "Phone Number",
+      "submittedOn": "Date Submitted",
+      "updatedOn": "Last Updated",
+      "progress": "Progress",
+      "downloadReceipt": "Download Receipt",
+      "viewScreenshot": "View Screenshot",
+      "viewDetails": "View Details"
+    },
+    "summary": "Showing {{count}} of {{total}} applications",
+    "summarySingle": "Showing {{count}} of {{total}} application",
+    "errorTitle": "Failed to load applications",
+    "retry": "Retry",
+    "emptySearch": "Try adjusting your search or filters."
+  },
+  "settings": {
+    "title": "Settings",
+    "loading": "Loading settings...",
+    "profile": {
+      "title": "Profile",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "phone": "Phone Number",
+      "phonePlaceholder": "+91 98765 43210",
+      "email": "Email Address",
+      "emailInfo": "Email is linked to your account and cannot be changed here.",
+      "save": "Save Profile",
+      "cancel": "Cancel",
+      "success": "Profile updated successfully!",
+      "errNameEmpty": "Full name cannot be empty.",
+      "errPhoneInvalid": "Invalid phone number format.",
+      "errSave": "Failed to save profile."
+    },
+    "notifications": {
+      "title": "Notification Preferences",
+      "emailLabel": "Email Notifications",
+      "emailDesc": "Receive updates about your applications via email",
+      "pushLabel": "Push Notifications",
+      "pushDesc": "Browser and mobile push alerts",
+      "smsLabel": "SMS Notifications",
+      "smsDesc": "Text messages for critical status changes"
+    },
+    "language": {
+      "title": "Language"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "saveSettings": {
+      "save": "Save Settings",
+      "cancel": "Cancel",
+      "success": "Settings saved successfully!",
+      "errSave": "Failed to save settings."
+    },
+    "security": {
+      "title": "Security",
+      "changePwd": "Change Password",
+      "currentPwd": "Current Password",
+      "newPwd": "New Password",
+      "confirmPwd": "Confirm Password",
+      "updatePwd": "Update Password",
+      "pwdSuccess": "Password changed successfully!",
+      "errCurrentReq": "Current password is required.",
+      "errNewMin": "New password must be at least 8 characters.",
+      "errMismatch": "Passwords do not match.",
+      "logoutAll": "Logout All Devices",
+      "logoutSuccess": "All other sessions have been revoked."
+    },
+    "privacy": {
+      "title": "Privacy & Data",
+      "download": "Download My Data",
+      "downloadSuccess": "Your data export has been queued. You will receive an email shortly.",
+      "delete": "Delete Account",
+      "deleteError": "Please contact support to delete your account."
+    }
+  },
+  "profilePhoto": {
+    "title": "Profile Photo",
+    "desc": "Recommended: Square JPG, PNG, or WEBP. Max size 5MB.",
+    "upload": "Upload New Photo",
+    "change": "Change Photo",
+    "remove": "Remove",
+    "uploading": "Uploading...",
+    "errSize": "Maximum size is 5MB.",
+    "errFormat": "Only JPG, PNG, and WEBP are allowed.",
+    "successUpdate": "Your profile photo has been updated.",
+    "successRemove": "Your profile photo has been removed.",
+    "errUpload": "Upload failed",
+    "errRemove": "Failed to remove"
+  }
+}

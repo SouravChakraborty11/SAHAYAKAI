@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Bot, ArrowLeft, FileText, CheckCircle, Upload, Eye, Download, Search, 
+  Bot, ArrowLeft, CheckCircle, Upload, Eye, Download, Search, 
   Clock, ShieldCheck, Play, RefreshCw, AlertTriangle, Mic, Copy, User, Calendar
 } from 'lucide-react';
 import { GlassCard } from '../../components/GlassCard';
-import { useAccessibility } from '../../core/contexts/AccessibilityContext';
 import { useExplain } from '../../core/hooks/useExplain';
 import { AccessibilityMenu } from '../../components/AccessibilityMenu';
 import { ChatInterface } from '../../components/chat/ChatInterface';
@@ -36,7 +35,6 @@ interface TrackingDetails {
 
 export const AutomationPanel: React.FC = () => {
   const navigate = useNavigate();
-  const { language } = useAccessibility();
   const explain = useExplain();
 
   // Form State
@@ -59,7 +57,7 @@ export const AutomationPanel: React.FC = () => {
   const [copiedRef, setCopiedRef] = useState(false);
 
   // Human Intervention State (Phase 7)
-  const [pendingInterventions, setPendingInterventions] = useState<any[]>([]);
+  const [_pendingInterventions, setPendingInterventions] = useState<any[]>([]);
   const [interventionInput, setInterventionInput] = useState('');
   const [activeInterventionSession, setActiveInterventionSession] = useState<any | null>(null);
   const [isSubmittingIntervention, setIsSubmittingIntervention] = useState(false);
@@ -183,7 +181,7 @@ export const AutomationPanel: React.FC = () => {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        await res.json();
         setInterventionMessage(`Input '${interventionInput}' submitted successfully. Playwright workflow resumed!`);
         setInterventionInput('');
         setTimeout(() => {
@@ -223,13 +221,13 @@ export const AutomationPanel: React.FC = () => {
           <button 
             onClick={() => navigate('/dashboard')}
             onMouseEnter={() => explain("Back to Dashboard")}
-            className="flex items-center space-x-2 bg-white px-5 py-3 rounded-full border border-gray-200 shadow-sm hover:bg-gray-50 text-gray-700 font-bold"
+            className="flex items-center space-x-2 bg-white dark:bg-gray-800 px-5 py-3 rounded-full border border-gray-200 dark:border-gray-700 shadow-sm hover:bg-gray-50 dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-bold"
           >
             <ArrowLeft className="w-5 h-5 text-[#2E7D32]" />
             <span>Dashboard</span>
           </button>
           
-          <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-full shadow-sm border border-gray-200">
+          <div className="flex items-center space-x-3 bg-white dark:bg-gray-800 px-6 py-3 rounded-full shadow-sm border border-gray-200 dark:border-gray-700">
             <Bot className="w-6 h-6 text-[#2E7D32]" />
             <h1 className="text-2xl font-extrabold text-[#2E7D32]">Playwright Automation Hub</h1>
           </div>
@@ -238,7 +236,7 @@ export const AutomationPanel: React.FC = () => {
         {/* Hero Banner */}
         <GlassCard className="bg-gradient-to-r from-[#1E3A8A] to-[#2563EB] text-white !p-8 !rounded-3xl shadow-xl relative overflow-hidden">
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center space-x-2 bg-white/20 px-4 py-1.5 rounded-full text-sm font-bold mb-4 backdrop-blur-md">
+            <div className="inline-flex items-center space-x-2 bg-white dark:bg-gray-800/20 px-4 py-1.5 rounded-full text-sm font-bold mb-4 backdrop-blur-md">
               <ShieldCheck className="w-4 h-4 text-emerald-300" />
               <span>Automated Government Scheme Submissions</span>
             </div>
@@ -253,7 +251,7 @@ export const AutomationPanel: React.FC = () => {
         <GlassCard className="bg-gradient-to-r from-amber-500 to-orange-600 text-white !p-8 !rounded-3xl shadow-xl border-2 border-amber-300">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
-              <div className="inline-flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold text-amber-100 backdrop-blur-md">
+              <div className="inline-flex items-center space-x-2 bg-white dark:bg-gray-800/20 px-3 py-1 rounded-full text-xs font-bold text-amber-100 backdrop-blur-md">
                 <AlertTriangle className="w-4 h-4 text-amber-200" />
                 <span>Phase-7 Human Intervention Manager</span>
               </div>
@@ -263,7 +261,7 @@ export const AutomationPanel: React.FC = () => {
               </p>
             </div>
 
-            <div className="w-full md:w-auto bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 space-y-3 shrink-0 min-w-[320px]">
+            <div className="w-full md:w-auto bg-white dark:bg-gray-800/10 backdrop-blur-md p-5 rounded-2xl border border-white/20 space-y-3 shrink-0 min-w-[320px]">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold text-amber-100 uppercase">Intervention Status</span>
                 <span className="px-2.5 py-0.5 bg-amber-200 text-amber-900 rounded-full font-bold text-xs">
@@ -273,7 +271,7 @@ export const AutomationPanel: React.FC = () => {
 
               <form onSubmit={handleSubmitIntervention} className="space-y-3">
                 {activeInterventionSession && activeInterventionSession.captcha_image_path && (
-                  <div className="p-2 bg-white/20 rounded-xl flex items-center justify-center">
+                  <div className="p-2 bg-white dark:bg-gray-800/20 rounded-xl flex items-center justify-center">
                     <img 
                       src={`http://127.0.0.1:8000/api/v1/automation/files/screenshots/${activeInterventionSession.captcha_image_path}`} 
                       alt="CAPTCHA Challenge"
@@ -289,7 +287,7 @@ export const AutomationPanel: React.FC = () => {
                     placeholder="Enter OTP / CAPTCHA Code..."
                     value={interventionInput}
                     onChange={e => setInterventionInput(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-white text-gray-900 placeholder-gray-400 rounded-xl text-sm font-mono font-bold focus:ring-2 focus:ring-amber-300 focus:outline-none"
+                    className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 rounded-xl text-sm font-mono font-bold focus:ring-2 focus:ring-amber-300 focus:outline-none"
                   />
                 </div>
 
@@ -326,19 +324,19 @@ export const AutomationPanel: React.FC = () => {
           
           {/* Left Column: Form Auto-filler (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <GlassCard className="bg-white border border-gray-200 shadow-lg !p-8 !rounded-3xl">
-              <h3 className="text-2xl font-extrabold text-gray-900 mb-6 flex items-center space-x-2">
+            <GlassCard className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg !p-8 !rounded-3xl">
+              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mb-6 flex items-center space-x-2">
                 <Play className="w-6 h-6 text-[#2E7D32]" />
                 <span>Automated Scheme Application</span>
               </h3>
 
               <form onSubmit={handleRunAutomation} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1.5">Target Scheme</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1.5">Target Scheme</label>
                   <select
                     value={selectedScheme}
                     onChange={e => setSelectedScheme(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-bold focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                   >
                     {schemeOptions.map(opt => (
                       <option key={opt.name} value={opt.name}>{opt.name}</option>
@@ -348,66 +346,66 @@ export const AutomationPanel: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Applicant Name</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Applicant Name</label>
                     <input
                       type="text"
                       required
                       placeholder="e.g. Ramesh Kumar"
                       value={applicantName}
                       onChange={e => setApplicantName(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Aadhaar Number</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Aadhaar Number</label>
                     <input
                       type="text"
                       required
                       placeholder="12-digit Aadhaar"
                       value={aadhaarNumber}
                       onChange={e => setAadhaarNumber(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Phone Number</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Phone Number</label>
                     <input
                       type="tel"
                       required
                       placeholder="10-digit Mobile"
                       value={phoneNumber}
                       onChange={e => setPhoneNumber(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-1">Address / State</label>
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Address / State</label>
                     <input
                       type="text"
                       placeholder="City, State"
                       value={address}
                       onChange={e => setAddress(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#2E7D32] focus:outline-none"
                     />
                   </div>
                 </div>
 
                 {/* File Upload Selector */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Attach Supporting Document (Optional)</label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-2xl p-4 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Attach Supporting Document (Optional)</label>
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-4 text-center bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:bg-gray-800 transition-colors cursor-pointer">
                     <input
                       type="file"
                       onChange={e => setSelectedFile(e.target.files?.[0] || null)}
                       className="hidden"
                       id="doc-upload"
                     />
-                    <label htmlFor="doc-upload" className="cursor-pointer flex items-center justify-center space-x-2 text-gray-600 font-bold text-sm">
+                    <label htmlFor="doc-upload" className="cursor-pointer flex items-center justify-center space-x-2 text-gray-600 dark:text-gray-400 font-bold text-sm">
                       <Upload className="w-5 h-5 text-[#2E7D32]" />
                       <span>{selectedFile ? selectedFile.name : 'Click to select Aadhaar / Certificate PDF or Image'}</span>
                     </label>
@@ -436,9 +434,9 @@ export const AutomationPanel: React.FC = () => {
 
             {/* Execution Result Card with Reference Number */}
             {result && (
-              <GlassCard className="bg-white border-2 border-emerald-300 shadow-xl !p-8 !rounded-3xl space-y-6">
+              <GlassCard className="bg-white dark:bg-gray-800 border-2 border-emerald-300 shadow-xl !p-8 !rounded-3xl space-y-6">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xl font-extrabold text-gray-900 flex items-center space-x-2">
+                  <h4 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                     <CheckCircle className="w-6 h-6 text-emerald-600" />
                     <span>Application Submitted Successfully</span>
                   </h4>
@@ -490,9 +488,9 @@ export const AutomationPanel: React.FC = () => {
                       href={`http://127.0.0.1:8000/api/v1/automation/files/screenshots/${result.screenshot}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center space-x-2 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors border border-gray-300"
+                      className="flex items-center space-x-2 px-5 py-3 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-sm hover:bg-gray-200 transition-colors border border-gray-300 dark:border-gray-600"
                     >
-                      <Eye className="w-4 h-4 text-gray-600" />
+                      <Eye className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                       <span>View Browser Screenshot</span>
                     </a>
                   )}
@@ -500,8 +498,8 @@ export const AutomationPanel: React.FC = () => {
 
                 {/* Step-by-Step Screenshot Gallery */}
                 {result.step_screenshots && result.step_screenshots.length > 0 && (
-                  <div className="pt-4 border-t border-gray-100 space-y-3">
-                    <h5 className="text-sm font-extrabold text-gray-900 flex items-center space-x-2">
+                  <div className="pt-4 border-t border-gray-100 dark:border-gray-800 space-y-3">
+                    <h5 className="text-sm font-extrabold text-gray-900 dark:text-gray-100 flex items-center space-x-2">
                       <Eye className="w-4 h-4 text-blue-600" />
                       <span>Step-by-Step Live Screenshots ({result.step_screenshots.length} Steps Captured)</span>
                     </h5>
@@ -512,7 +510,7 @@ export const AutomationPanel: React.FC = () => {
                           href={`http://127.0.0.1:8000/api/v1/automation/files/screenshots/${s.filename}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between p-3 bg-gray-50 hover:bg-blue-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 transition-all"
+                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 hover:bg-blue-50 border border-gray-200 dark:border-gray-700 rounded-xl text-xs font-bold text-gray-800 dark:text-gray-200 transition-all"
                         >
                           <span className="truncate mr-2">Step {idx + 1}: {s.step}</span>
                           <Eye className="w-4 h-4 text-blue-600 shrink-0" />
@@ -527,25 +525,25 @@ export const AutomationPanel: React.FC = () => {
 
           {/* Right Column: Application Status Tracker (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <GlassCard className="bg-white border border-gray-200 shadow-lg !p-8 !rounded-3xl">
-              <h3 className="text-2xl font-extrabold text-gray-900 mb-4 flex items-center space-x-2">
+            <GlassCard className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg !p-8 !rounded-3xl">
+              <h3 className="text-2xl font-extrabold text-gray-900 dark:text-gray-100 mb-4 flex items-center space-x-2">
                 <Search className="w-6 h-6 text-blue-600" />
                 <span>Track Application Status</span>
               </h3>
-              <p className="text-sm text-gray-600 font-medium mb-6">
+              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-6">
                 Enter your generated reference number to fetch real-time application status.
               </p>
 
               <form onSubmit={handleTrackStatus} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Application Reference No.</label>
+                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Application Reference No.</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. PMK-20260721-X8912"
                     value={trackingRef}
                     onChange={e => setTrackingRef(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm font-mono font-bold text-gray-900 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-mono font-bold text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-600 focus:outline-none"
                   />
                 </div>
 
@@ -578,7 +576,7 @@ export const AutomationPanel: React.FC = () => {
 
               {/* Status Results Card */}
               {trackingResult && (
-                <div className="mt-6 pt-6 border-t border-gray-100 space-y-4">
+                <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 space-y-4">
                   <div className="p-5 bg-blue-50/70 border-2 border-blue-200 rounded-2xl space-y-3">
                     <div className="flex items-center justify-between border-b border-blue-200 pb-3">
                       <div>
@@ -592,26 +590,26 @@ export const AutomationPanel: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-3 text-xs">
                       <div>
-                        <span className="font-bold text-gray-500 block mb-0.5">Applicant Name</span>
-                        <span className="font-extrabold text-gray-900 flex items-center">
+                        <span className="font-bold text-gray-500 dark:text-gray-400 block mb-0.5">Applicant Name</span>
+                        <span className="font-extrabold text-gray-900 dark:text-gray-100 flex items-center">
                           <User className="w-3.5 h-3.5 mr-1 text-blue-600" />
                           {trackingResult.applicant_name}
                         </span>
                       </div>
                       <div>
-                        <span className="font-bold text-gray-500 block mb-0.5">Reference No.</span>
-                        <span className="font-extrabold text-gray-900 font-mono">{trackingResult.reference_number}</span>
+                        <span className="font-bold text-gray-500 dark:text-gray-400 block mb-0.5">Reference No.</span>
+                        <span className="font-extrabold text-gray-900 dark:text-gray-100 font-mono">{trackingResult.reference_number}</span>
                       </div>
                       <div>
-                        <span className="font-bold text-gray-500 block mb-0.5">Submission Date</span>
-                        <span className="font-semibold text-gray-700 flex items-center">
+                        <span className="font-bold text-gray-500 dark:text-gray-400 block mb-0.5">Submission Date</span>
+                        <span className="font-semibold text-gray-700 dark:text-gray-300 flex items-center">
                           <Calendar className="w-3.5 h-3.5 mr-1 text-blue-600" />
                           {trackingResult.submission_date}
                         </span>
                       </div>
                       <div>
-                        <span className="font-bold text-gray-500 block mb-0.5">Last Updated</span>
-                        <span className="font-semibold text-gray-700 flex items-center">
+                        <span className="font-bold text-gray-500 dark:text-gray-400 block mb-0.5">Last Updated</span>
+                        <span className="font-semibold text-gray-700 dark:text-gray-300 flex items-center">
                           <Clock className="w-3.5 h-3.5 mr-1 text-blue-600" />
                           {trackingResult.last_updated}
                         </span>

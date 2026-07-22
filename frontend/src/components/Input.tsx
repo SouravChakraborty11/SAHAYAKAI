@@ -18,7 +18,7 @@ export const Input: React.FC<InputProps> = ({ label, error, type, className = ''
       <div className="relative">
         <input
           type={isPassword && showPassword ? 'text' : type}
-          className={`block w-full rounded-2xl border ${error ? 'border-[#D32F2F]' : 'border-gray-300'} px-5 py-4 min-h-[56px] text-lg bg-white/70 backdrop-blur-sm text-[var(--text-color)] placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-[#2E7D32]/50 focus:border-[#2E7D32] transition-colors shadow-sm`}
+          className={`block w-full rounded-2xl border ${error ? 'border-[#D32F2F]' : 'border-gray-300 dark:border-gray-600'} px-5 py-4 min-h-[56px] text-lg bg-white dark:bg-gray-800/70 backdrop-blur-sm text-[var(--text-color)] placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-[#2E7D32]/50 focus:border-[#2E7D32] transition-colors shadow-sm`}
           {...props}
         />
         {isPassword && (
@@ -29,9 +29,9 @@ export const Input: React.FC<InputProps> = ({ label, error, type, className = ''
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? (
-              <EyeOff className="h-7 w-7 text-gray-500 hover:text-gray-800" />
+              <EyeOff className="h-7 w-7 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:text-gray-200" />
             ) : (
-              <Eye className="h-7 w-7 text-gray-500 hover:text-gray-800" />
+              <Eye className="h-7 w-7 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:text-gray-200" />
             )}
           </button>
         )}

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text
+from sqlalchemy import Column, Integer, String, DateTime, Text, ForeignKey
 from sqlalchemy.sql import func
 from app.core.database import Base
 
@@ -6,6 +6,7 @@ class SchemeApplication(Base):
     __tablename__ = "scheme_applications"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)
     reference_number = Column(String(100), unique=True, index=True, nullable=False)
     scheme_name = Column(String(255), nullable=False)
     applicant_name = Column(String(255), nullable=False)

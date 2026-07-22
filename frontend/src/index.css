@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where(.dark, .dark *));
 @theme {
   --color-primary: #2E7D32;
   --color-secondary: #81C784;
@@ -27,6 +27,17 @@
     --color-error: #EF5350;
   }
   
+  .dark {
+    --bg-color: #121212;
+    --text-color: #E0E0E0;
+    --card-bg: rgba(30, 30, 30, 0.85);
+    --border-color: rgba(60, 60, 60, 0.6);
+  }
+  
+  html.dark body {
+    background-image: linear-gradient(135deg, #121212, #0d1a10);
+  }
+  
   .large-text {
     font-size: 125%;
   }
@@ -46,6 +57,10 @@
     transition: background-color 0.3s ease, color 0.3s ease;
     background-image: linear-gradient(135deg, var(--bg-color), #E8F5E9);
     min-height: 100vh;
+  }
+
+  button {
+    @apply transition-transform duration-150 ease-out active:scale-[0.97];
   }
 }
 

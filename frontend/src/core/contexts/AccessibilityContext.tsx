@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { apiPatchSettings, getToken } from '../api';
 
 interface AccessibilityState {
   highContrast: boolean;
@@ -27,8 +29,9 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
     voiceMode: false,
     readScreen: false,
     reduceMotion: false,
-    language: 'en',
+    language: localStorage.getItem('app_language') || 'en',
   });
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     if (state.highContrast) {
@@ -55,7 +58,20 @@ export const AccessibilityProvider: React.FC<{ children: React.ReactNode }> = ({
   const toggleVoiceMode = () => setState(prev => ({ ...prev, voiceMode: !prev.voiceMode }));
   const toggleReadScreen = () => setState(prev => ({ ...prev, readScreen: !prev.readScreen }));
   const toggleReduceMotion = () => setState(prev => ({ ...prev, reduceMotion: !prev.reduceMotion }));
-  const setLanguage = (language: string) => setState(prev => ({ ...prev, language }));
+  const setLanguage = async (language: string) => {
+    setState(prev => ({ ...prev, language }));
+    localStorage.setItem('app_language', language);
+    i18n.changeLanguage(language);
+    
+    const token = getToken();
+    if (token) {
+      try {
+        await apiPatchSettings({ language });
+      } catch (err) {
+        console.error('Failed to save language to backend', err);
+      }
+    }
+  };
 
   return (
     <AccessibilityContext.Provider value={{ 

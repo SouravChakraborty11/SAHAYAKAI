@@ -21,4 +21,5 @@ storage/receipts/
 storage/screenshots/
 *.pdf
 *.png
+*.bak
 
