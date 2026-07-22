@@ -5,8 +5,9 @@ asyncpg
 alembic
 pydantic[email]
 pydantic-settings
-pyjwt
+python-jose[cryptography]
 python-dotenv
 google-auth
 google-genai
 sse-starlette
+aiosqlite
